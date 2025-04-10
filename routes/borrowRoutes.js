@@ -84,13 +84,17 @@ router.get("/", authenticateUser, async (req, res) => {
 
     // Step 1: Get borrowed items with item_name & description
     const result = await pool.query(
-      `SELECT borrow.*, items.name AS item_name, items.description
-       FROM borrow
-       JOIN items ON borrow.item_id = items.id
-       WHERE borrow.borrower_id = $1
-       ORDER BY borrow.borrowed_at DESC`,
-      [userId]
-    );
+  `SELECT DISTINCT ON (borrow.item_id)
+          borrow.*, 
+          items.name AS item_name, 
+          items.description
+   FROM borrow
+   JOIN items ON borrow.item_id = items.id
+   WHERE borrow.borrower_id = $1
+   ORDER BY borrow.item_id, borrow.borrowed_at DESC`,
+  [userId]
+);
+
 
     const borrowedItems = result.rows;
 
