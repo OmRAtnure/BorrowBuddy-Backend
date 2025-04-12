@@ -90,7 +90,7 @@ router.get("/", authenticateUser, async (req, res) => {
           items.description
    FROM borrow
    JOIN items ON borrow.item_id = items.id
-   WHERE borrow.borrower_id = $1
+   WHERE borrow.borrower_id = $1 AND borrow.returned_at IS NULL
    ORDER BY borrow.item_id, borrow.borrowed_at DESC`,
   [userId]
 );
